@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MotorPerú — Concesionario multimarca | Toyota, Kia, Hyundai, Nissan, Mitsubishi</title>
+<meta name="description" content="MotorPerú: más de 20 años vendiendo autos 0km en Perú. Financiamiento, prueba de manejo y servicio oficial en Lima, Arequipa y Trujillo." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --primary:#C8102E;        /* rojo Perú */
+    --primary-dark:#9b0c24;
+    --ink:#0E1116;
+    --ink-2:#2a2f38;
+    --muted:#6b7280;
+    --bg:#ffffff;
+    --bg-soft:#f6f7f9;
+    --line:#e5e7eb;
+    --accent:#0a2540;         /* navy */
+  }
+  html,body{margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* Top bar */
+  .topbar{background:var(--accent);color:#fff;font-size:13px}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;padding:8px 24px}
+  .topbar a{opacity:.85}
+
+  /* Nav */
+  header.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;padding:16px 24px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.02em}
+  .brand-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--primary),#ff3355);display:grid;place-items:center;color:#fff;font-weight:800}
+  .nav-links{display:flex;gap:28px;font-weight:500;color:var(--ink-2)}
+  .nav-links a:hover{color:var(--primary)}
+  .nav-cta{background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;font-weight:600;font-size:14px}
+  .nav-cta:hover{background:var(--primary-dark)}
+  @media(max-width:860px){.nav-links{display:none}}
+
+  /* Hero */
+  .hero{background:linear-gradient(180deg,#fff 0%,#f6f7f9 100%);padding:64px 0 48px}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+  .eyebrow{color:var(--primary);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+  h1{font-size:48px;line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:0 0 16px}
+  @media(max-width:600px){h1{font-size:34px}}
+  .lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:560px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-dark)}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+  .hero-img{border-radius:16px;overflow:hidden;box-shadow:0 20px 40px -20px rgba(10,37,64,.25);aspect-ratio:4/3;background:#0a2540 url('https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1200&auto=format&fit=crop') center/cover}
+
+  /* Stats bar */
+  .stats{background:var(--accent);color:#fff;padding:32px 0}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+  @media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+  .stat-num{font-size:32px;font-weight:800;color:#fff}
+  .stat-label{font-size:13px;opacity:.75;margin-top:4px}
+
+  /* Section */
+  section{padding:72px 0}
+  .sec-head{text-align:center;margin-bottom:48px}
+  .sec-head h2{font-size:36px;letter-spacing:-.02em;margin:0 0 12px;font-weight:800}
+  .sec-head p{color:var(--muted);max-width:580px;margin:0 auto;font-size:16px}
+
+  /* Brand logos */
+  .brands{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;align-items:center;padding:48px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  @media(max-width:700px){.brands{grid-template-columns:repeat(3,1fr)}}
+  .brand-chip{text-align:center;font-weight:700;font-size:18px;color:var(--muted);letter-spacing:.02em}
+
+  /* Cars grid */
+  .cars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:900px){.cars{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.cars{grid-template-columns:1fr}}
+  .car{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:box-shadow .2s,transform .2s}
+  .car:hover{box-shadow:0 12px 30px -10px rgba(0,0,0,.12);transform:translateY(-2px)}
+  .car-img{aspect-ratio:16/10;background-size:cover;background-position:center}
+  .car-body{padding:20px}
+  .car-tag{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.06em;text-transform:uppercase}
+  .car-name{font-size:18px;font-weight:700;margin:6px 0 4px}
+  .car-desc{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .car-price{font-size:20px;font-weight:800;color:var(--accent)}
+  .car-price small{font-size:12px;color:var(--muted);font-weight:500}
+
+  /* Feature blocks */
+  .features{background:var(--bg-soft)}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:800px){.feat-grid{grid-template-columns:1fr}}
+  .feat{background:#fff;padding:28px;border-radius:14px;border:1px solid var(--line)}
+  .feat-icon{width:44px;height:44px;border-radius:10px;background:rgba(200,16,46,.1);color:var(--primary);display:grid;place-items:center;font-size:22px;font-weight:700;margin-bottom:16px}
+  .feat h3{margin:0 0 6px;font-size:17px;font-weight:700}
+  .feat p{margin:0;color:var(--muted);font-size:14px}
+
+  /* Promo */
+  .promo{background:linear-gradient(135deg,var(--accent) 0%,#143b66 100%);color:#fff;border-radius:18px;padding:48px;display:grid;grid-template-columns:2fr 1fr;gap:32px;align-items:center}
+  @media(max-width:800px){.promo{grid-template-columns:1fr;padding:32px}}
+  .promo h2{margin:0 0 12px;font-size:28px;font-weight:800}
+  .promo p{margin:0;opacity:.85}
+  .promo-cta{background:var(--primary);color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;justify-self:end}
+  @media(max-width:800px){.promo-cta{justify-self:start}}
+
+  /* Footer */
+  footer{background:#0a0d12;color:#c9ced6;padding:48px 0 24px;font-size:14px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px}
+  @media(max-width:800px){.foot-grid{grid-template-columns:1fr 1fr}}
+  footer h4{color:#fff;margin:0 0 14px;font-size:14px;font-weight:700}
+  footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  footer a:hover{color:var(--primary)}
+  .foot-bottom{border-top:1px solid #1d222b;padding-top:20px;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span>📞 (01) 777-8899 · WhatsApp +51 999 888 777</span>
+    <span>Lun–Sáb 9:00–19:00 · Dom 10:00–14:00</span>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <div class="brand"><div class="brand-mark">M</div>MotorPerú</div>
+    <nav class="nav-links">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#financiamiento">Financiamiento</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#sedes">Sedes</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a href="#contacto" class="nav-cta">Cotiza tu auto</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">MotorPerú · 20 años en el mercado</div>
+      <h1>Tu próximo auto,<br>con la cuota que sí te alcanza.</h1>
+      <p class="lede">Representamos Toyota, Kia, Hyundai, Nissan y Mitsubishi. Más de 50 modelos 0km, financiamiento con los principales bancos y prueba de manejo gratuita en tres ciudades.</p>
+      <div class="cta-row">
+        <a href="#catalogo" class="btn btn-primary">Ver catálogo →</a>
+        <a href="#" class="btn btn-ghost" onclick="document.querySelector('.mp-fab')?.click();return false;">Habla con Andrea 💬</a>
+      </div>
+    </div>
+    <div class="hero-img" aria-hidden="true"></div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="wrap stats-grid">
+    <div><div class="stat-num">20+</div><div class="stat-label">años en el mercado</div></div>
+    <div><div class="stat-num">50K</div><div class="stat-label">autos vendidos</div></div>
+    <div><div class="stat-num">5</div><div class="stat-label">marcas oficiales</div></div>
+    <div><div class="stat-num">3</div><div class="stat-label">ciudades</div></div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="brands">
+      <div class="brand-chip">TOYOTA</div>
+      <div class="brand-chip">KIA</div>
+      <div class="brand-chip">HYUNDAI</div>
+      <div class="brand-chip">NISSAN</div>
+      <div class="brand-chip">MITSUBISHI</div>
+    </div>
+  </div>
+</section>
+
+<section id="catalogo">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Modelos más vendidos</h2>
+      <p>SUVs, sedanes, pickups y urbanos. Todos con garantía oficial y mantenimiento incluido.</p>
+    </div>
+    <div class="cars">
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">SUV · Híbrido</div>
+          <div class="car-name">Toyota RAV4 Hybrid</div>
+          <div class="car-desc">SUV familiar con motor híbrido, tracción AWD opcional.</div>
+          <div class="car-price">S/ 169,900 <small>desde</small></div>
+        </div>
+      </div>
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1542362567-b07e54358753?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">Sedán · Híbrido</div>
+          <div class="car-name">Toyota Corolla Hybrid</div>
+          <div class="car-desc">El sedán más vendido del Perú, ahora con motor híbrido.</div>
+          <div class="car-price">S/ 109,900 <small>desde</small></div>
+        </div>
+      </div>
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">Pickup · 4x4</div>
+          <div class="car-name">Toyota Hilux 2.4L 4x4</div>
+          <div class="car-desc">La pickup líder en trabajo y aventura. Cabina doble.</div>
+          <div class="car-price">S/ 159,900 <small>desde</small></div>
+        </div>
+      </div>
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">SUV</div>
+          <div class="car-name">Kia Sportage 2.0L</div>
+          <div class="car-desc">Diseño vanguardista, tecnología completa y 7 años de garantía.</div>
+          <div class="car-price">S/ 115,900 <small>desde</small></div>
+        </div>
+      </div>
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">Urbano</div>
+          <div class="car-name">Kia Picanto 1.25L</div>
+          <div class="car-desc">Ideal para la ciudad: bajo consumo, fácil de estacionar.</div>
+          <div class="car-price">S/ 46,900 <small>desde</small></div>
+        </div>
+      </div>
+      <div class="car">
+        <div class="car-img" style="background-image:url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop')"></div>
+        <div class="car-body">
+          <div class="car-tag">SUV</div>
+          <div class="car-name">Hyundai Tucson 2.0L</div>
+          <div class="car-desc">El SUV más premiado del año. Seguridad 5 estrellas Latin NCAP.</div>
+          <div class="car-price">S/ 119,900 <small>desde</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="servicios">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Por qué MotorPerú</h2>
+      <p>No vendemos autos. Te ayudamos a elegir el que calza con tu vida.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-icon">🚗</div><h3>Prueba de manejo gratuita</h3><p>Agenda en cualquiera de nuestras sedes y maneja el modelo que te interesa antes de decidir.</p></div>
+      <div class="feat"><div class="feat-icon">💳</div><h3>Financiamiento al instante</h3><p>Convenios con BBVA, BCP, Interbank, Scotiabank y Mibanco. Cuota inicial desde 20%.</p></div>
+      <div class="feat"><div class="feat-icon">🔧</div><h3>Service oficial de por vida</h3><p>Mantenimiento preventivo, repuestos originales y taller autorizado en las tres ciudades.</p></div>
+      <div class="feat"><div class="feat-icon">🤝</div><h3>Tasamos tu auto usado</h3><p>Hasta 30% del valor como parte de pago para tu nuevo 0km. Sin vueltas.</p></div>
+      <div class="feat"><div class="feat-icon">🛡️</div><h3>Garantía 3–5 años</h3><p>Kia: 7 años de garantía. Toyota: 3 años o 100,000 km. Paz mental incluida.</p></div>
+      <div class="feat"><div class="feat-icon">📄</div><h3>Trámites y SOAT gratis</h3><p>Placas, SOAT y tramitología 100% cubiertos en tu compra de auto 0km. Hasta 30/04.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="financiamiento">
+  <div class="wrap">
+    <div class="promo">
+      <div>
+        <h2>¿Sabes cuánto te queda de cuota al mes?</h2>
+        <p>Cuéntale a Andrea tu presupuesto y te arma 2–3 opciones con cuota exacta, inicial y plazo. En segundos.</p>
+      </div>
+      <a href="#" class="promo-cta" onclick="document.querySelector('.mp-fab')?.click();return false;">Simular cuota →</a>
+    </div>
+  </div>
+</section>
+
+<footer id="contacto">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="color:#fff;margin-bottom:12px"><div class="brand-mark">M</div>MotorPerú</div>
+        <p style="color:#6b7280;max-width:320px">Concesionario multimarca con 20+ años en el mercado peruano. Toyota, Kia, Hyundai, Nissan y Mitsubishi.</p>
+      </div>
+      <div>
+        <h4>Sedes</h4>
+        <ul>
+          <li>Surco · Av. Javier Prado 4200</li>
+          <li>San Isidro · Av. Ejército 980</li>
+          <li>Arequipa · Av. Bolognesi 520</li>
+          <li>Trujillo · Av. España 1800</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li>(01) 777-8899</li>
+          <li>WhatsApp +51 999 888 777</li>
+          <li>ventas@motorperu.com.pe</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Trabaja con nosotros</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 MotorPerú S.A.C. · RUC 20512345678 · Todos los derechos reservados.</span>
+      <span>Demo comercial · Powered by <a href="https://ijvagency.com" style="color:#c9ced6">IJV Agency</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/widget/agent.js"></script>
+</body>
+</html>
