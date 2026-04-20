@@ -7,8 +7,8 @@
   var DEFAULTS = {
     n8nBase: 'https://n8n-jcg4epwgyztosnmbxghhwvdv.34.133.34.116.sslip.io',
     chatPath: '/webhook/demo-motorperu-chat',
+    citasPath: '/webhook/demo-motorperu-citas',
     leadsPath: null,
-    calendlyUrl: 'https://calendly.com/motorperu/prueba-manejo',
     timeoutMs: 45000,
     maxRetries: 2,
     brandName: 'MotorPerú',
@@ -46,7 +46,7 @@
   .mp-fab.open{background:${cfg.accent}}
   .mp-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:${cfg.primary};border-radius:999px;padding:2px 7px;font-size:11px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.15);animation:mp-pulse 2s infinite}
   @keyframes mp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-  .mp-panel{position:absolute;bottom:80px;right:0;width:380px;max-width:calc(100vw - 40px);height:580px;max-height:calc(100vh - 120px);background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.22);display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb}
+  .mp-panel{position:absolute;bottom:80px;right:0;width:400px;max-width:calc(100vw - 40px);height:640px;max-height:calc(100vh - 120px);background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.22);display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb}
   .mp-panel.open{display:flex;animation:mp-slide .25s ease-out}
   @keyframes mp-slide{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   .mp-head{background:linear-gradient(135deg,${cfg.primary},${cfg.primaryDark});color:#fff;padding:18px 20px;display:flex;align-items:center;gap:12px}
@@ -57,8 +57,10 @@
   .mp-close{margin-left:auto;background:transparent;color:#fff;border:none;font-size:22px;cursor:pointer;opacity:.85;padding:4px 8px}
   .mp-close:hover{opacity:1}
   .mp-msgs{flex:1;overflow-y:auto;padding:18px;background:#f6f7f9;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
-  .mp-row{display:flex;gap:8px;max-width:88%}
+  .mp-row{display:flex;gap:8px;max-width:88%;width:fit-content}
   .mp-row.user{margin-left:auto;flex-direction:row-reverse}
+  .mp-row.bot:has(.mp-lead){max-width:100%;width:100%}
+  .mp-row.bot:has(.mp-lead) .mp-bubble{padding:0;border:none;background:transparent;width:100%}
   .mp-bubble{padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.5;word-wrap:break-word}
   .mp-row.bot .mp-bubble{background:#fff;color:#0E1116;border:1px solid #e5e7eb;border-bottom-left-radius:4px}
   .mp-row.user .mp-bubble{background:${cfg.primary};color:#fff;border-bottom-right-radius:4px}
@@ -97,7 +99,7 @@
   .mp-day-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px}
   .mp-day-tab{flex:0 0 auto;background:rgba(255,255,255,.1) !important;color:#fff !important;padding:7px 10px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:500 !important;white-space:nowrap}
   .mp-day-tab.active{background:${cfg.primary} !important;border-color:${cfg.primary} !important}
-  .mp-slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+  .mp-slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px}
   .mp-slot{background:rgba(255,255,255,.12) !important;color:#fff !important;padding:9px 4px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:600 !important;transition:all .15s;margin:0 !important;width:auto !important}
   .mp-slot:hover:not(.blocked){background:${cfg.primary} !important;border-color:${cfg.primary} !important}
   .mp-slot.sel{background:${cfg.primary} !important;border-color:#fff !important;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
@@ -276,16 +278,32 @@
       conf.onclick = function(){
         if (state.slot === null) return;
         var d = days[state.day], slot = SLOTS[state.slot];
-        box.innerHTML =
-          '<h4>✅ ¡Cita confirmada!</h4>' +
-          '<p style="margin:0 0 10px">'+esc(state.name.split(' ')[0])+', tu prueba de manejo quedó agendada:</p>' +
-          '<div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;font-size:14px;line-height:1.6">' +
-            '📍 <strong>'+esc(state.sede.name)+'</strong> · '+esc(state.sede.addr)+'<br>' +
-            '📅 <strong>'+esc(d.label)+'</strong> · '+esc(slot)+' hrs<br>' +
-            '📱 Confirmación al '+esc(state.phone)+
-          '</div>' +
-          '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por WhatsApp 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
-        scrollBottom();
+        conf.disabled = true; conf.textContent = 'Confirmando…';
+        fetch(cfg.n8nBase + cfg.citasPath, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            nombre: state.name,
+            telefono: state.phone,
+            email: '',
+            modelo: state.interest,
+            sede: state.sede.name + ' — ' + state.sede.addr,
+            fecha: d.label,
+            hora: slot,
+            sessionId: sid
+          })
+        }).catch(function(){}).finally(function(){
+          box.innerHTML =
+            '<h4>✅ ¡Cita confirmada!</h4>' +
+            '<p style="margin:0 0 10px">'+esc(state.name.split(' ')[0])+', tu prueba de manejo quedó agendada:</p>' +
+            '<div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;font-size:14px;line-height:1.6">' +
+              '📍 <strong>'+esc(state.sede.name)+'</strong> · '+esc(state.sede.addr)+'<br>' +
+              '📅 <strong>'+esc(d.label)+'</strong> · '+esc(slot)+' hrs<br>' +
+              '📱 Confirmación al '+esc(state.phone)+
+            '</div>' +
+            '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por WhatsApp 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
+          scrollBottom();
+        });
       };
       scrollBottom();
     }
