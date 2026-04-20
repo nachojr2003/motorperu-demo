@@ -89,6 +89,19 @@
   .mp-lead input{width:100%;padding:9px 11px;border:none;border-radius:8px;margin-bottom:8px;font:14px 'Inter',sans-serif;outline:none}
   .mp-lead button{width:100%;background:${cfg.primary};color:#fff;border:none;padding:11px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
   .mp-lead button:hover{background:${cfg.primaryDark}}
+  .mp-sede-list{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+  .mp-sede{display:flex !important;flex-direction:column;align-items:flex-start;text-align:left;background:rgba(255,255,255,.1) !important;color:#fff !important;padding:10px 12px !important;border:1px solid rgba(255,255,255,.2);border-radius:8px;cursor:pointer;transition:background .15s;width:100%;margin:0}
+  .mp-sede:hover{background:${cfg.primary} !important}
+  .mp-sede strong{font-size:14px;font-weight:700;display:block}
+  .mp-sede span{font-size:12px;opacity:.8;display:block;margin-top:2px}
+  .mp-day-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px}
+  .mp-day-tab{flex:0 0 auto;background:rgba(255,255,255,.1) !important;color:#fff !important;padding:7px 10px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:500 !important;white-space:nowrap}
+  .mp-day-tab.active{background:${cfg.primary} !important;border-color:${cfg.primary} !important}
+  .mp-slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+  .mp-slot{background:rgba(255,255,255,.12) !important;color:#fff !important;padding:9px 4px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:600 !important;transition:all .15s;margin:0 !important;width:auto !important}
+  .mp-slot:hover:not(.blocked){background:${cfg.primary} !important;border-color:${cfg.primary} !important}
+  .mp-slot.sel{background:${cfg.primary} !important;border-color:#fff !important;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+  .mp-slot.blocked{background:rgba(255,255,255,.04) !important;color:rgba(255,255,255,.3) !important;text-decoration:line-through;cursor:not-allowed;border-color:rgba(255,255,255,.08) !important}
   @media(max-width:480px){.mp-panel{bottom:80px;right:0;left:0;margin:0 10px;width:auto;max-width:none}}
   `;
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -162,40 +175,122 @@
     return re.test(text);
   }
 
+  // ---- Agendador interno ----
+  var SEDES = [
+    { id:'surco',     name:'Surco',     addr:'Av. Javier Prado 4200' },
+    { id:'sanisidro', name:'San Isidro', addr:'Av. Ejército 980' },
+    { id:'arequipa',  name:'Arequipa',  addr:'Av. Bolognesi 520' },
+    { id:'trujillo',  name:'Trujillo',  addr:'Av. España 1800' }
+  ];
+  var SLOTS = ['09:00','10:30','12:00','14:00','15:30','17:00','18:30'];
+  var MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  var DAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  function buildDays(){
+    var out = [], d = new Date();
+    d.setDate(d.getDate()+1); // desde mañana
+    for (var i=0;i<5;i++){
+      var dd = new Date(d); dd.setDate(d.getDate()+i);
+      if (dd.getDay() === 0) { i--; d.setDate(d.getDate()+1); continue; } // skip domingos
+      out.push({ date: dd, label: DAYS[dd.getDay()]+' '+dd.getDate()+' '+MONTHS[dd.getMonth()] });
+    }
+    return out;
+  }
+  // Seed determinista por sede+día para que "ocupados" se vean estables
+  function isBlocked(sedeId, dayIdx, slotIdx){
+    var h = 0, key = sedeId+'-'+dayIdx+'-'+slotIdx;
+    for (var k=0;k<key.length;k++) h = (h*31 + key.charCodeAt(k)) >>> 0;
+    return (h % 10) < 4; // ~40% bloqueados
+  }
+
   function showLeadForm(){
     if (leadShown) return;
     leadShown = true;
+    var state = { name:'', phone:'', interest:'', sede:null, day:null, slot:null };
     var row = document.createElement('div'); row.className='mp-row bot';
-    row.innerHTML = `
-      <div class="mp-lead">
-        <h4>📋 Te contacta un asesor</h4>
-        <p>Déjame tus datos y un asesor de MotorPerú te llama en menos de 2 horas hábiles.</p>
-        <input type="text" id="mp-lead-name" placeholder="Nombre completo" />
-        <input type="tel" id="mp-lead-phone" placeholder="Celular (WhatsApp)" />
-        <input type="text" id="mp-lead-interest" placeholder="Modelo de interés (opcional)" />
-        <button id="mp-lead-send">Enviar</button>
-      </div>`;
+    row.innerHTML = '<div class="mp-lead" id="mp-sched"></div>';
     $msgs.appendChild(row); scrollBottom();
-    row.querySelector('#mp-lead-send').onclick = function(){
-      var n = row.querySelector('#mp-lead-name').value.trim();
-      var p = row.querySelector('#mp-lead-phone').value.trim();
-      var i = row.querySelector('#mp-lead-interest').value.trim();
-      if (!n || !p){ alert('Ingresa nombre y celular'); return; }
-      row.querySelector('.mp-lead').innerHTML =
-        '<h4>✅ ¡Listo, '+esc(n.split(' ')[0])+'!</h4>' +
-        '<p style="margin:0 0 12px">Un asesor te contactará al '+esc(p)+' en menos de 2 horas hábiles.</p>' +
-        '<div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px;margin-top:6px">' +
-          '<div style="font-weight:700;font-size:14px;margin-bottom:6px">⚡ O agenda tu prueba de manejo ahora</div>' +
-          '<p style="margin:0 0 10px;font-size:13px;opacity:.9">45 minutos · elige sede y horario que te quede</p>' +
-          '<a href="'+cfg.calendlyUrl+'" target="_blank" rel="noopener" style="display:block;background:'+cfg.primary+';color:#fff;text-decoration:none;padding:11px;border-radius:8px;font-weight:600;text-align:center;font-size:14px">Agendar prueba de manejo →</a>' +
-        '</div>' +
-        '<p style="margin:10px 0 0;font-size:12px;opacity:.75;text-align:center">¿Prefieres WhatsApp? <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">Abrir chat</a></p>';
+    var box = row.querySelector('#mp-sched');
+
+    function renderStep1(){
+      box.innerHTML =
+        '<h4>📋 Paso 1 de 3 — Tus datos</h4>' +
+        '<p>Para que el asesor te llegue con contexto antes de la cita.</p>' +
+        '<input type="text" id="f-name" placeholder="Nombre completo" />' +
+        '<input type="tel" id="f-phone" placeholder="Celular (WhatsApp)" />' +
+        '<input type="text" id="f-int" placeholder="Modelo de interés (opcional)" />' +
+        '<button id="f-next">Continuar →</button>';
+      box.querySelector('#f-next').onclick = function(){
+        var n = box.querySelector('#f-name').value.trim();
+        var p = box.querySelector('#f-phone').value.trim();
+        if (!n || !p){ alert('Ingresa nombre y celular'); return; }
+        state.name = n; state.phone = p; state.interest = box.querySelector('#f-int').value.trim();
+        if (cfg.leadsPath) fetch(cfg.n8nBase+cfg.leadsPath,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,phone:p,interest:state.interest,sessionId:sid,source:'chat-demo'})}).catch(function(){});
+        renderStep2();
+      };
+    }
+
+    function renderStep2(){
+      var html = '<h4>📍 Paso 2 de 3 — Elige sede</h4><p>Dónde te queda más cómoda la prueba de manejo.</p><div class="mp-sede-list">';
+      SEDES.forEach(function(s){
+        html += '<button class="mp-sede" data-id="'+s.id+'"><strong>'+s.name+'</strong><span>'+s.addr+'</span></button>';
+      });
+      html += '</div><button id="f-back1" style="background:transparent;border:1px solid rgba(255,255,255,.3);margin-top:8px">← Atrás</button>';
+      box.innerHTML = html;
+      box.querySelectorAll('.mp-sede').forEach(function(b){
+        b.onclick = function(){ state.sede = SEDES.find(function(x){return x.id===b.dataset.id;}); renderStep3(); };
+      });
+      box.querySelector('#f-back1').onclick = renderStep1;
       scrollBottom();
-      // Fire-and-forget lead capture (if leadsPath configured)
-      if (cfg.leadsPath) {
-        fetch(cfg.n8nBase + cfg.leadsPath, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:n, phone:p, interest:i, sessionId:sid, source:'chat-demo'}) }).catch(function(){});
-      }
-    };
+    }
+
+    function renderStep3(){
+      var days = buildDays();
+      state.day = state.day || 0;
+      var html = '<h4>🕒 Paso 3 de 3 — Elige horario</h4>' +
+        '<p style="margin-bottom:10px">Sede: <strong>'+esc(state.sede.name)+'</strong></p>' +
+        '<div class="mp-day-tabs">';
+      days.forEach(function(d,i){
+        html += '<button class="mp-day-tab'+(i===state.day?' active':'')+'" data-i="'+i+'">'+esc(d.label)+'</button>';
+      });
+      html += '</div><div class="mp-slot-grid">';
+      SLOTS.forEach(function(s,i){
+        var blocked = isBlocked(state.sede.id, state.day, i);
+        html += '<button class="mp-slot'+(blocked?' blocked':'')+(state.slot===i?' sel':'')+'" '+(blocked?'disabled':'')+' data-i="'+i+'">'+esc(s)+(blocked?' ✕':'')+'</button>';
+      });
+      html += '</div>' +
+        '<div style="display:flex;gap:6px;margin-top:12px">' +
+          '<button id="f-back2" style="flex:0 0 auto;background:transparent;border:1px solid rgba(255,255,255,.3)">← Atrás</button>' +
+          '<button id="f-confirm" style="flex:1" '+(state.slot===null?'disabled style="flex:1;opacity:.5"':'')+'>Confirmar cita</button>' +
+        '</div>';
+      box.innerHTML = html;
+      box.querySelectorAll('.mp-day-tab').forEach(function(b){
+        b.onclick = function(){ state.day = parseInt(b.dataset.i,10); state.slot = null; renderStep3(); };
+      });
+      box.querySelectorAll('.mp-slot').forEach(function(b){
+        b.onclick = function(){ if (b.disabled) return; state.slot = parseInt(b.dataset.i,10); renderStep3(); };
+      });
+      box.querySelector('#f-back2').onclick = renderStep2;
+      var conf = box.querySelector('#f-confirm');
+      if (state.slot === null) { conf.disabled = true; conf.style.opacity='.5'; conf.style.cursor='not-allowed'; }
+      conf.onclick = function(){
+        if (state.slot === null) return;
+        var d = days[state.day], slot = SLOTS[state.slot];
+        box.innerHTML =
+          '<h4>✅ ¡Cita confirmada!</h4>' +
+          '<p style="margin:0 0 10px">'+esc(state.name.split(' ')[0])+', tu prueba de manejo quedó agendada:</p>' +
+          '<div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;font-size:14px;line-height:1.6">' +
+            '📍 <strong>'+esc(state.sede.name)+'</strong> · '+esc(state.sede.addr)+'<br>' +
+            '📅 <strong>'+esc(d.label)+'</strong> · '+esc(slot)+' hrs<br>' +
+            '📱 Confirmación al '+esc(state.phone)+
+          '</div>' +
+          '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por WhatsApp 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
+        scrollBottom();
+      };
+      scrollBottom();
+    }
+
+    renderStep1();
   }
 
   function openPanel(){
