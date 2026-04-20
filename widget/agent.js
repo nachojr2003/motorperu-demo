@@ -8,6 +8,7 @@
     n8nBase: 'https://n8n-jcg4epwgyztosnmbxghhwvdv.34.133.34.116.sslip.io',
     chatPath: '/webhook/demo-motorperu-chat',
     leadsPath: null,
+    calendlyUrl: 'https://calendly.com/motorperu/prueba-manejo',
     timeoutMs: 45000,
     maxRetries: 2,
     brandName: 'MotorPerú',
@@ -157,7 +158,7 @@
   }
 
   function detectHandoff(text){
-    var re = /\b(asesor|contactar|equipo|agenda|agendar|prueba de manejo|cotizaci[oó]n formal|ll[aá]manme|contacto humano)\b/i;
+    var re = /\b(asesor|contactar|equipo|agenda|agendar|prueba de manejo|cotizaci[oó]n formal|ll[aá]manme|contacto humano|visitar|visita|cita)\b/i;
     return re.test(text);
   }
 
@@ -180,7 +181,16 @@
       var p = row.querySelector('#mp-lead-phone').value.trim();
       var i = row.querySelector('#mp-lead-interest').value.trim();
       if (!n || !p){ alert('Ingresa nombre y celular'); return; }
-      row.querySelector('.mp-lead').innerHTML = '<h4>✅ ¡Listo!</h4><p style="margin:0">Gracias '+esc(n)+'. Un asesor te contactará al '+esc(p)+' en menos de 2 horas hábiles. Si prefieres inmediato: <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp ahora</a>.</p>';
+      row.querySelector('.mp-lead').innerHTML =
+        '<h4>✅ ¡Listo, '+esc(n.split(' ')[0])+'!</h4>' +
+        '<p style="margin:0 0 12px">Un asesor te contactará al '+esc(p)+' en menos de 2 horas hábiles.</p>' +
+        '<div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px;margin-top:6px">' +
+          '<div style="font-weight:700;font-size:14px;margin-bottom:6px">⚡ O agenda tu prueba de manejo ahora</div>' +
+          '<p style="margin:0 0 10px;font-size:13px;opacity:.9">45 minutos · elige sede y horario que te quede</p>' +
+          '<a href="'+cfg.calendlyUrl+'" target="_blank" rel="noopener" style="display:block;background:'+cfg.primary+';color:#fff;text-decoration:none;padding:11px;border-radius:8px;font-weight:600;text-align:center;font-size:14px">Agendar prueba de manejo →</a>' +
+        '</div>' +
+        '<p style="margin:10px 0 0;font-size:12px;opacity:.75;text-align:center">¿Prefieres WhatsApp? <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">Abrir chat</a></p>';
+      scrollBottom();
       // Fire-and-forget lead capture (if leadsPath configured)
       if (cfg.leadsPath) {
         fetch(cfg.n8nBase + cfg.leadsPath, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:n, phone:p, interest:i, sessionId:sid, source:'chat-demo'}) }).catch(function(){});
