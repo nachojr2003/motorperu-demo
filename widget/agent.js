@@ -220,7 +220,7 @@
         '<h4>📋 Paso 1 de 3 — Tus datos</h4>' +
         '<p>Para que el asesor te llegue con contexto antes de la cita.</p>' +
         '<input type="text" id="f-name" value="'+esc(state.name)+'" placeholder="Nombre completo" />' +
-        '<input type="tel" id="f-phone" value="'+esc(state.phone)+'" placeholder="Celular (WhatsApp)" />' +
+        '<input type="tel" id="f-phone" value="'+esc(state.phone)+'" placeholder="Celular" />' +
         '<input type="email" id="f-email" value="'+esc(state.email)+'" placeholder="Correo electrónico" />' +
         '<input type="text" id="f-int" value="'+esc(state.interest)+'" placeholder="Modelo de interés (opcional)" />' +
         '<button id="f-next">Continuar →</button>';
@@ -304,7 +304,7 @@
               '📅 <strong>'+esc(d.label)+'</strong> · '+esc(slot)+' hrs<br>' +
               '✉️ Confirmación a '+esc(state.email)+
             '</div>' +
-            '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por correo 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
+            '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por correo 2h antes. ¿Necesitas cambiar algo? Escríbenos a <a href="mailto:ventas@motorperu.com.pe" style="color:#fff;text-decoration:underline">ventas@motorperu.com.pe</a>.</p>';
           scrollBottom();
         });
       };

@@ -8,7 +8,7 @@
 | # | Pedido | ¿Cómo lo cubrimos? | Estado en demo |
 |---|---|---|---|
 | 1 | Responder +100 mensajes por día | Agente 24/7 con Gemini 2.5 Flash. Capacidad real: miles de mensajes/día concurrentes. | ✅ Funcionando |
-| 2 | Dar seguimiento a clientes | Cron automático en n8n: recordatorios 24h / 72h / 7d vía WhatsApp + email. | ✅ Agente sabe explicarlo |
+| 2 | Dar seguimiento a clientes | Cron automático en n8n: recordatorios 24h / 72h / 7d por correo electrónico. | ✅ Agente sabe explicarlo |
 | 3 | Agendar clientes | Calendly embebido. Widget muestra el CTA tras capturar el lead. | ✅ Funcionando |
 
 ---
@@ -34,17 +34,17 @@
 
 ## Funcionalidades que podemos ofrecer (además del chat)
 
-### 🔄 Seguimiento automático
-- **Recordatorio 24h** si el lead no agendó prueba de manejo.
-- **Recordatorio 72h** con la promo vigente si mostró interés en un modelo específico.
-- **Re-enganche 7 días** con contenido relevante (comparativa de modelos, testimonios).
-- Canal: WhatsApp Business + email. Se decide según dónde respondió el cliente.
+### 🔄 Seguimiento automático (canal: correo electrónico)
+- **Recordatorio 24h** por correo si el lead no agendó prueba de manejo.
+- **Recordatorio 72h** por correo con la promo vigente si mostró interés en un modelo específico.
+- **Re-enganche 7 días** por correo con contenido relevante (comparativa, testimonios).
+- Toda comunicación saliente de MotorPerú es por correo. Pedimos celular solo como contexto para el asesor.
 
-### 📅 Agendamiento
-- Integración con **Calendly** (o Google Calendar / Meet si prefieren).
+### 📅 Agendamiento (integrado en el chat)
+- Selector nativo dentro del widget (sin salir a Calendly externo).
 - Slots de 45 min para prueba de manejo o visita a sede.
-- Confirmación automática por WhatsApp + email.
-- Recordatorio 2h antes de la cita.
+- Confirmación automática por **correo electrónico**.
+- Recordatorio **por correo 2h antes** de la cita.
 
 ### 📊 Reporte quincenal
 - Cada 15 días le llega un email al dueño:
