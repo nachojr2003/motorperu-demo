@@ -46,7 +46,8 @@
   .mp-fab.open{background:${cfg.accent}}
   .mp-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:${cfg.primary};border-radius:999px;padding:2px 7px;font-size:11px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.15);animation:mp-pulse 2s infinite}
   @keyframes mp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-  .mp-panel{position:absolute;bottom:80px;right:0;width:400px;max-width:calc(100vw - 40px);height:640px;max-height:calc(100vh - 120px);background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.22);display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb}
+  .mp-panel{position:absolute;bottom:80px;right:0;width:380px;max-width:calc(100vw - 40px);height:640px;max-height:calc(100vh - 120px);background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.22);display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb;box-sizing:border-box}
+  .mp-panel *{box-sizing:border-box}
   .mp-panel.open{display:flex;animation:mp-slide .25s ease-out}
   @keyframes mp-slide{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   .mp-head{background:linear-gradient(135deg,${cfg.primary},${cfg.primaryDark});color:#fff;padding:18px 20px;display:flex;align-items:center;gap:12px}
@@ -85,10 +86,10 @@
   .mp-send:disabled{opacity:.5;cursor:not-allowed}
   .mp-foot{text-align:center;padding:6px;font-size:11px;color:#9ca3af;background:#fff;border-top:1px solid #f3f4f6}
   .mp-foot a{color:${cfg.primary};text-decoration:none}
-  .mp-lead{background:linear-gradient(135deg,${cfg.accent},#143b66);color:#fff;border-radius:12px;padding:16px;margin:6px 0}
+  .mp-lead{background:linear-gradient(135deg,${cfg.accent},#143b66);color:#fff;border-radius:12px;padding:14px;margin:6px 0;max-width:100%;overflow:hidden}
   .mp-lead h4{margin:0 0 6px;font-size:15px}
-  .mp-lead p{margin:0 0 12px;font-size:13px;opacity:.9}
-  .mp-lead input{width:100%;padding:9px 11px;border:none;border-radius:8px;margin-bottom:8px;font:14px 'Inter',sans-serif;outline:none}
+  .mp-lead p{margin:0 0 10px;font-size:13px;opacity:.9}
+  .mp-lead input{width:100%;padding:9px 11px;border:none;border-radius:8px;margin-bottom:8px;font:14px 'Inter',sans-serif;outline:none;box-sizing:border-box}
   .mp-lead button{width:100%;background:${cfg.primary};color:#fff;border:none;padding:11px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
   .mp-lead button:hover{background:${cfg.primaryDark}}
   .mp-sede-list{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
@@ -99,12 +100,12 @@
   .mp-day-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px}
   .mp-day-tab{flex:0 0 auto;background:rgba(255,255,255,.1) !important;color:#fff !important;padding:7px 10px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:500 !important;white-space:nowrap}
   .mp-day-tab.active{background:${cfg.primary} !important;border-color:${cfg.primary} !important}
-  .mp-slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px}
-  .mp-slot{background:rgba(255,255,255,.12) !important;color:#fff !important;padding:9px 4px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:600 !important;transition:all .15s;margin:0 !important;width:auto !important}
+  .mp-slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px;width:100%}
+  .mp-slot{background:rgba(255,255,255,.12) !important;color:#fff !important;padding:9px 2px !important;border:1px solid rgba(255,255,255,.2) !important;border-radius:6px !important;font-size:12px !important;cursor:pointer;font-weight:600 !important;transition:all .15s;margin:0 !important;width:100% !important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mp-slot:hover:not(.blocked){background:${cfg.primary} !important;border-color:${cfg.primary} !important}
   .mp-slot.sel{background:${cfg.primary} !important;border-color:#fff !important;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
   .mp-slot.blocked{background:rgba(255,255,255,.04) !important;color:rgba(255,255,255,.3) !important;text-decoration:line-through;cursor:not-allowed;border-color:rgba(255,255,255,.08) !important}
-  @media(max-width:480px){.mp-panel{bottom:80px;right:0;left:0;margin:0 10px;width:auto;max-width:none}}
+  @media(max-width:480px){.mp-panel{position:fixed;bottom:88px;right:10px;left:10px;width:auto;max-width:none;height:auto;max-height:calc(100vh - 110px)}}
   `;
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -208,7 +209,7 @@
   function showLeadForm(){
     if (leadShown) return;
     leadShown = true;
-    var state = { name:'', phone:'', interest:'', sede:null, day:null, slot:null };
+    var state = { name:'', phone:'', email:'', interest:'', sede:null, day:null, slot:null };
     var row = document.createElement('div'); row.className='mp-row bot';
     row.innerHTML = '<div class="mp-lead" id="mp-sched"></div>';
     $msgs.appendChild(row); scrollBottom();
@@ -218,16 +219,18 @@
       box.innerHTML =
         '<h4>📋 Paso 1 de 3 — Tus datos</h4>' +
         '<p>Para que el asesor te llegue con contexto antes de la cita.</p>' +
-        '<input type="text" id="f-name" placeholder="Nombre completo" />' +
-        '<input type="tel" id="f-phone" placeholder="Celular (WhatsApp)" />' +
-        '<input type="text" id="f-int" placeholder="Modelo de interés (opcional)" />' +
+        '<input type="text" id="f-name" value="'+esc(state.name)+'" placeholder="Nombre completo" />' +
+        '<input type="tel" id="f-phone" value="'+esc(state.phone)+'" placeholder="Celular (WhatsApp)" />' +
+        '<input type="email" id="f-email" value="'+esc(state.email)+'" placeholder="Correo electrónico" />' +
+        '<input type="text" id="f-int" value="'+esc(state.interest)+'" placeholder="Modelo de interés (opcional)" />' +
         '<button id="f-next">Continuar →</button>';
       box.querySelector('#f-next').onclick = function(){
         var n = box.querySelector('#f-name').value.trim();
         var p = box.querySelector('#f-phone').value.trim();
-        if (!n || !p){ alert('Ingresa nombre y celular'); return; }
-        state.name = n; state.phone = p; state.interest = box.querySelector('#f-int').value.trim();
-        if (cfg.leadsPath) fetch(cfg.n8nBase+cfg.leadsPath,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,phone:p,interest:state.interest,sessionId:sid,source:'chat-demo'})}).catch(function(){});
+        var e = box.querySelector('#f-email').value.trim();
+        if (!n || !p || !e){ alert('Ingresa nombre, celular y correo'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){ alert('Correo inválido'); return; }
+        state.name = n; state.phone = p; state.email = e; state.interest = box.querySelector('#f-int').value.trim();
         renderStep2();
       };
     }
@@ -285,7 +288,7 @@
           body: JSON.stringify({
             nombre: state.name,
             telefono: state.phone,
-            email: '',
+            email: state.email,
             modelo: state.interest,
             sede: state.sede.name + ' — ' + state.sede.addr,
             fecha: d.label,
@@ -299,9 +302,9 @@
             '<div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;font-size:14px;line-height:1.6">' +
               '📍 <strong>'+esc(state.sede.name)+'</strong> · '+esc(state.sede.addr)+'<br>' +
               '📅 <strong>'+esc(d.label)+'</strong> · '+esc(slot)+' hrs<br>' +
-              '📱 Confirmación al '+esc(state.phone)+
+              '✉️ Confirmación a '+esc(state.email)+
             '</div>' +
-            '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por WhatsApp 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
+            '<p style="margin:10px 0 0;font-size:12px;opacity:.85">Te llegará un recordatorio por correo 2h antes. ¿Necesitas cambiar algo? Escríbenos por <a href="https://wa.me/51999888777" target="_blank" style="color:#fff;text-decoration:underline">WhatsApp</a>.</p>';
           scrollBottom();
         });
       };
