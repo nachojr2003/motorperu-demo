@@ -265,8 +265,8 @@
       });
       html += '</div>' +
         '<div style="display:flex;gap:6px;margin-top:12px">' +
-          '<button id="f-back2" style="flex:0 0 auto;background:transparent;border:1px solid rgba(255,255,255,.3)">← Atrás</button>' +
-          '<button id="f-confirm" style="flex:1" '+(state.slot===null?'disabled style="flex:1;opacity:.5"':'')+'>Confirmar cita</button>' +
+          '<button id="f-back2" style="width:33% !important;flex:0 0 33%;background:transparent;border:1px solid rgba(255,255,255,.3);padding:11px 4px">← Atrás</button>' +
+          '<button id="f-confirm" '+(state.slot===null?'disabled':'')+' style="width:67% !important;flex:1 1 auto'+(state.slot===null?';opacity:.5;cursor:not-allowed':'')+'">Confirmar cita</button>' +
         '</div>';
       box.innerHTML = html;
       box.querySelectorAll('.mp-day-tab').forEach(function(b){
